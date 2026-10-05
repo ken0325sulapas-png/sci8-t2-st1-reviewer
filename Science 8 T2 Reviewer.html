@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Periodic Table Scientists Flashcards & Quiz Pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --front-text: #f8fafc;
+      --back-bg: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      --accent-glow: rgba(59, 130, 246, 0.5);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-color);
+      color: #fff;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
+    }
+
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+
+    .backface-hidden {
+      backface-visibility: hidden;
+    }
+
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-between p-4 sm:p-8">
+
+  <header class="w-full max-w-5xl text-center mb-6">
+    <div class="inline-block px-3 py-1 mb-2 text-xs font-semibold tracking-wider text-blue-400 uppercase bg-blue-950/60 border border-blue-800/50 rounded-full">
+      Chemistry History & Pioneers Pro (8 Core Scientists)
+    </div>
+    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+      Periodic Table Masters Lab
+    </h1>
+    <p class="text-slate-400 text-sm sm:text-base mt-2">Explore the 8 foundational pioneers and test your mastery with an extensive <span class="text-blue-400 font-semibold">25-Question Unique Quiz</span>! <span class="text-xs text-blue-400 block mt-1">💡 Tip: Double-click any study card to flip it!</span></p>
+    
+    <!-- Mode Switcher Tabs -->
+    <div class="flex justify-center gap-3 mt-6">
+      <button id="tab-study" onclick="switchMode('study')" class="px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-500/25 border border-blue-400/30 flex items-center gap-2">
+        <span>📚</span> Study Deck (<span id="study-count-badge">8</span>)
+      </button>
+      <button id="tab-quiz" onclick="switchMode('quiz')" class="px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 hover:text-white border border-slate-700/60 flex items-center gap-2">
+        <span>⚡</span> 25-Q Unique Quiz
+      </button>
+    </div>
+  </header>
+
+  <main class="w-full max-w-5xl flex-grow flex flex-col items-center">
+
+    <!-- STUDY DECK VIEW -->
+    <div id="view-study" class="w-full flex flex-col items-center">
+      <!-- Controls -->
+      <div class="flex flex-wrap justify-center gap-3 mb-8 w-full max-w-xl">
+        <button onclick="shuffleDeck()" class="flex-1 min-w-[140px] bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm hover:shadow-blue-500/10 flex items-center justify-center gap-2">
+          <span>🔀</span> Shuffle Deck
+        </button>
+        <button onclick="toggleAllCards()" id="flip-all-btn" class="flex-1 min-w-[140px] bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-200 px-4 py-2.5 rounded-xl font-medium text-sm transition-all shadow-sm hover:shadow-blue-500/10 flex items-center justify-center gap-2">
+          <span>🔄</span> Flip All
+        </button>
+      </div>
+
+      <!-- Card Grid -->
+      <div id="card-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full justify-items-center pb-8">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+
+    <!-- QUIZ MODE VIEW -->
+    <div id="view-quiz" class="w-full flex flex-col items-center hidden">
+      
+      <!-- Quiz Intro State -->
+      <div id="quiz-intro" class="w-full max-w-lg bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 text-center shadow-2xl">
+        <div class="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+          🧪
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-2">25 Unique Question Challenge</h2>
+        <p class="text-slate-400 text-sm mb-6">Test your mastery across 25 distinct multiple-choice questions derived comprehensively from our 8 core periodic table pioneers!</p>
+        <button onclick="startQuiz()" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/30 transition-all transform hover:-translate-y-0.5">
+          Start 25-Q Quiz 🚀
+        </button>
+      </div>
+
+      <!-- Active Quiz Question State -->
+      <div id="quiz-active" class="w-full max-w-xl flex flex-col items-center hidden">
+        <!-- Progress bar & score header -->
+        <div class="w-full flex justify-between items-center mb-4 px-2">
+          <span id="quiz-progress-text" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Question 1 of 25</span>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-semibold px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">
+              Streak: <span id="quiz-streak-live">0</span> 🔥
+            </span>
+            <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
+              Score: <span id="quiz-score-live">0</span>
+            </span>
+          </div>
+        </div>
+        
+        <!-- Progress Bar Track -->
+        <div class="w-full bg-slate-800 h-2 rounded-full mb-6 overflow-hidden border border-slate-700/50">
+          <div id="quiz-progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full transition-all duration-300" style="width: 4%;"></div>
+        </div>
+
+        <!-- Question Prompt Box -->
+        <div class="w-full bg-slate-900/80 backdrop-blur-xl border border-slate-700/70 rounded-2xl p-6 mb-6 text-center shadow-2xl">
+          <span id="quiz-prompt-category" class="text-xs uppercase tracking-widest text-blue-400 font-bold mb-2 block">Unique Challenge</span>
+          <h3 id="quiz-question-text" class="text-xl sm:text-2xl font-extrabold text-white leading-snug">Question loading...</h3>
+        </div>
+
+        <!-- Choices Grid (4 options) -->
+        <div id="quiz-choices-container" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+          <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- Next Question Action Button (Hidden until choice made) -->
+        <div id="quiz-next-container" class="w-full hidden">
+          <button onclick="nextQuizQuestion()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2">
+            <span>➡️</span> Next Question
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Results Summary State -->
+      <div id="quiz-results" class="w-full max-w-lg bg-slate-900/70 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 text-center shadow-2xl hidden">
+        <div class="w-20 h-20 bg-gradient-to-tr from-amber-500/20 to-emerald-500/20 border border-amber-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+          🏆
+        </div>
+        <h2 id="result-title" class="text-2xl font-bold text-white mb-2">Quiz Completed!</h2>
+        <p id="result-subtitle" class="text-slate-300 text-sm mb-6">Fantastic job working through all 25 unique challenges.</p>
+        
+        <div class="bg-slate-950/50 border border-slate-800/80 rounded-xl p-5 mb-6 flex justify-around items-center">
+          <div>
+            <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Final Score</div>
+            <div id="result-score" class="text-3xl font-extrabold text-blue-400">0 / 25</div>
+          </div>
+          <div class="h-10 w-px bg-slate-800"></div>
+          <div>
+            <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Accuracy</div>
+            <div id="result-accuracy" class="text-3xl font-extrabold text-emerald-400">0%</div>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="restartQuiz()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/25 transition-all">
+            Try Again 🔄
+          </button>
+          <button onclick="switchMode('study')" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold rounded-xl transition-all">
+            Back to Study Deck 📚
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="w-full text-center text-slate-500 text-xs mt-8">
+    Periodic Table Scientists Flashcards &bull; 8 Core Pioneers &bull; 25 Unique Quiz Questions
+  </footer>
+
+  <script>
+    const scientistsData = [
+      { name: "Antoine Lavoisier", info: "Classified metals vs non‑metals (1789)", year: "1789", category: "Classification" },
+      { name: "Johann Döbereiner", info: "Triads with predictable middle element (1829)", year: "1829", category: "Triads" },
+      { name: "John Newlands", info: "Law of Octaves (every 8th element) (1864)", year: "1864", category: "Octaves" },
+      { name: "Dmitri Mendeleev", info: "Modern table, gaps for undiscovered elements (1869)", year: "1869", category: "Periodic Table" },
+      { name: "Henry Moseley", info: "Atomic number principle (1913)", year: "1913", category: "Atomic Number" },
+      { name: "William Ramsay", info: "Discovery of noble gases (1894–1898)", year: "1894–1898", category: "Noble Gases" },
+      { name: "Glenn Seaborg", info: "Actinide series, transuranium elements (1940s)", year: "1940s", category: "Actinides" },
+      { name: "Perrier & Segrè", info: "Discovery of technetium (1937)", year: "1937", category: "Synthetic Elements" }
+    ];
+
+    let currentMode = 'study';
+    let studyCards = [...scientistsData];
+    let quizDeck = [];
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    let quizStreak = 0;
+    let allFlipped = false;
+    let questionAnswered = false;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('study-count-badge').innerText = scientistsData.length;
+      renderStudyCards();
+    });
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const tabStudy = document.getElementById('tab-study');
+      const tabQuiz = document.getElementById('tab-quiz');
+      const viewStudy = document.getElementById('view-study');
+      const viewQuiz = document.getElementById('view-quiz');
+
+      if (mode === 'study') {
+        tabStudy.className = "px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-500/25 border border-blue-400/30 flex items-center gap-2";
+        tabQuiz.className = "px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 hover:text-white border border-slate-700/60 flex items-center gap-2";
+        viewStudy.classList.remove('hidden');
+        viewQuiz.classList.add('hidden');
+      } else {
+        tabQuiz.className = "px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-500/25 border border-blue-400/30 flex items-center gap-2";
+        tabStudy.className = "px-6 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 hover:text-white border border-slate-700/60 flex items-center gap-2";
+        viewQuiz.classList.remove('hidden');
+        viewStudy.classList.add('hidden');
+        resetQuizState();
+      }
+    }
+
+    function renderStudyCards() {
+      const container = document.getElementById('card-container');
+      container.innerHTML = '';
+
+      studyCards.forEach((item, index) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'w-full max-w-[260px] h-[190px] perspective-1000 cursor-pointer select-none';
+        cardEl.innerHTML = `
+          <div class="card-inner relative w-full h-full duration-500 transform-style-3d rounded-xl shadow-xl">
+            <div class="absolute inset-0 w-full h-full backface-hidden bg-slate-900/80 backdrop-blur-xl border border-slate-700/70 rounded-xl p-5 flex flex-col items-center justify-center text-center">
+              <span class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mb-2">Scientist #${index + 1}</span>
+              <h3 class="text-lg font-bold text-white mb-2 leading-tight">${item.name}</h3>
+              <span class="text-xs text-blue-400 font-medium">Double-click to flip</span>
+            </div>
+            <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl p-5 flex flex-col items-center justify-center text-center shadow-inner">
+              <span class="text-[10px] uppercase tracking-widest text-blue-200 font-semibold mb-1">Contribution</span>
+              <p class="text-xs font-medium text-white leading-snug overflow-y-auto max-h-[120px]">${item.info}</p>
+            </div>
+          </div>
+        `;
+
+        const inner = cardEl.querySelector('.card-inner');
+        cardEl.addEventListener('dblclick', () => {
+          inner.classList.toggle('rotate-y-180');
+        });
+
+        container.appendChild(cardEl);
+      });
+    }
+
+    function shuffleDeck() {
+      studyCards.sort(() => Math.random() - 0.5);
+      renderStudyCards();
+    }
+
+    function toggleAllCards() {
+      allFlipped = !allFlipped;
+      const inners = document.querySelectorAll('#card-container .card-inner');
+      inners.forEach(inner => {
+        if (allFlipped) {
+          inner.classList.add('rotate-y-180');
+        } else {
+          inner.classList.remove('rotate-y-180');
+        }
+      });
+      const flipBtn = document.getElementById('flip-all-btn');
+      flipBtn.innerHTML = allFlipped ? `<span>🔄</span> Unflip All` : `<span>🔄</span> Flip All`;
+    }
+
+    function generate25UniqueQuizDeck() {
+      const questionPool = [];
+
+      // 1. Core dataset questions (Scientist identification, Contribution, Year)
+      scientistsData.forEach((sci, idx) => {
+        questionPool.push({
+          category: "Identify Scientist",
+          prompt: `Which foundational chemist is credited with: "${sci.info}"?`,
+          correct: sci.name,
+          wrong: scientistsData.filter(s => s.name !== sci.name).map(s => s.name)
+        });
+
+        questionPool.push({
+          category: "Identify Contribution",
+          prompt: `What was the major historical contribution or discovery made by ${sci.name}?`,
+          correct: sci.info,
+          wrong: scientistsData.filter(s => s.info !== sci.info).map(s => s.info)
+        });
+
+        if (sci.year) {
+          questionPool.push({
+            category: "Historical Timeline",
+            prompt: `In what year or period did ${sci.name} establish their milestone (${sci.info.split('(')[0].trim()})?`,
+            correct: sci.year,
+            wrong: scientistsData.filter(s => s.year !== sci.year).map(s => s.year)
+          });
+        }
+      });
+
+      // 2. Extra domain-specific mastery questions to complete variety
+      const extraQuestions = [
+        {
+          category: "Noble Gases",
+          prompt: "Who discovered the noble gases (including argon, neon, krypton, and xenon) between 1894 and 1898?",
+          correct: "William Ramsay",
+          wrong: ["Henry Moseley", "Dmitri Mendeleev", "Antoine Lavoisier"]
+        },
+        {
+          category: "Actinides & Transuranium",
+          prompt: "Which scientist discovered the actinide series and elements heavier than uranium in the 1940s?",
+          correct: "Glenn Seaborg",
+          wrong: ["Perrier & Segrè", "Johann Döbereiner", "John Newlands"]
+        },
+        {
+          category: "Synthetic Elements",
+          prompt: "Who were the scientists responsible for discovering technetium (element 43) in 1937, the first artificially produced element?",
+          correct: "Perrier & Segrè",
+          wrong: ["William Ramsay", "Henry Moseley", "Antoine Lavoisier"]
+        },
+        {
+          category: "Atomic Number Principle",
+          prompt: "Whose breakthrough established that elements should be ordered by atomic number rather than atomic weight in 1913?",
+          correct: "Henry Moseley",
+          wrong: ["Dmitri Mendeleev", "John Newlands", "Johann Döbereiner"]
+        },
+        {
+          category: "Law of Octaves",
+          prompt: "Who proposed the 'Law of Octaves', observing that chemical properties repeated every eighth element in 1864?",
+          correct: "John Newlands",
+          wrong: ["Johann Döbereiner", "Antoine Lavoisier", "William Ramsay"]
+        },
+        {
+          category: "Triads",
+          prompt: "Who arranged elements into groups of three with predictable chemical properties (Triads) in 1829?",
+          correct: "Johann Döbereiner",
+          wrong: ["Dmitri Mendeleev", "John Newlands", "Glenn Seaborg"]
+        },
+        {
+          category: "Classification Pioneers",
+          prompt: "Who is historically recognized for publishing an early extensive list of elements classifying metals versus non-metals in 1789?",
+          correct: "Antoine Lavoisier",
+          wrong: ["Dmitri Mendeleev", "William Ramsay", "Henry Moseley"]
+        },
+        {
+          category: "Periodic Table Gaps",
+          prompt: "Which chemist famously left empty gaps in their periodic table to accurately predict the existence of undiscovered elements?",
+          correct: "Dmitri Mendeleev",
+          wrong: ["John Newlands", "Johann Döbereiner", "Antoine Lavoisier"]
+        },
+        {
+          category: "Transuranium Chemistry",
+          prompt: "Element 106 (Seaborgium) was named in honor of which Nobel laureate famous for discovering transuranium elements?",
+          correct: "Glenn Seaborg",
+          wrong: ["Henry Moseley", "William Ramsay", "Perrier & Segrè"]
+        }
+      ];
+
+      questionPool.push(...extraQuestions);
+
+      // Shuffle and pick exactly 25 unique questions
+      questionPool.sort(() => Math.random() - 0.5);
+      
+      const seenPrompts = new Set();
+      const uniqueDeck = [];
+      for (const q of questionPool) {
+        if (!seenPrompts.has(q.prompt)) {
+          seenPrompts.add(q.prompt);
+          uniqueDeck.push(q);
+        }
+        if (uniqueDeck.length === 25) break;
+      }
+
+      // Fallback filler if pool is ever short
+      while (uniqueDeck.length < 25 && questionPool.length > uniqueDeck.length) {
+        const extra = questionPool.find(q => !uniqueDeck.includes(q));
+        if (extra) uniqueDeck.push(extra);
+        else break;
+      }
+
+      return uniqueDeck;
+    }
+
+    function resetQuizState() {
+      document.getElementById('quiz-intro').classList.remove('hidden');
+      document.getElementById('quiz-active').classList.add('hidden');
+      document.getElementById('quiz-results').classList.add('hidden');
+      quizScore = 0;
+      quizStreak = 0;
+      currentQuizIndex = 0;
+    }
+
+    function startQuiz() {
+      quizDeck = generate25UniqueQuizDeck();
+      currentQuizIndex = 0;
+      quizScore = 0;
+      quizStreak = 0;
+
+      document.getElementById('quiz-intro').classList.add('hidden');
+      document.getElementById('quiz-results').classList.add('hidden');
+      document.getElementById('quiz-active').classList.remove('hidden');
+
+      loadQuizQuestion();
+    }
+
+    function loadQuizQuestion() {
+      questionAnswered = false;
+      document.getElementById('quiz-next-container').classList.add('hidden');
+
+      const qObj = quizDeck[currentQuizIndex];
+      const totalQ = quizDeck.length;
+
+      document.getElementById('quiz-score-live').innerText = quizScore;
+      document.getElementById('quiz-streak-live').innerText = quizStreak;
+      document.getElementById('quiz-progress-text').innerText = `Question ${currentQuizIndex + 1} of ${totalQ}`;
+      
+      const progressPercent = ((currentQuizIndex + 1) / totalQ) * 100;
+      document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+
+      document.getElementById('quiz-prompt-category').innerText = `Question ${currentQuizIndex + 1} &bull; ${qObj.category}`;
+      document.getElementById('quiz-question-text').innerText = qObj.prompt;
+
+      const wrongShuffled = [...qObj.wrong].sort(() => Math.random() - 0.5);
+      const choices = [qObj.correct, wrongShuffled[0], wrongShuffled[1], wrongShuffled[2]];
+      choices.sort(() => Math.random() - 0.5);
+
+      renderChoices(choices, qObj.correct);
+    }
+
+    function renderChoices(choices, correctAnswer) {
+      const container = document.getElementById('quiz-choices-container');
+      container.innerHTML = '';
+
+      choices.forEach(choiceText => {
+        const btn = document.createElement('button');
+        btn.className = "w-full p-4 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/80 rounded-xl text-slate-200 font-medium text-sm sm:text-base text-left transition-all shadow-sm flex items-center justify-between group";
+        btn.innerHTML = `<span>${choiceText}</span> <span class="w-6 h-6 rounded-full border border-slate-600 flex items-center justify-center text-xs text-slate-400 group-hover:border-blue-400 group-hover:text-blue-400">abc</span>`;
+        
+        btn.addEventListener('click', () => {
+          if (questionAnswered) return;
+          questionAnswered = true;
+
+          const allButtons = container.querySelectorAll('button');
+          allButtons.forEach(b => b.disabled = true);
+
+          if (choiceText === correctAnswer) {
+            btn.className = "w-full p-4 bg-emerald-950/60 border border-emerald-500/60 rounded-xl text-emerald-200 font-medium text-sm sm:text-base text-left transition-all shadow-lg shadow-emerald-900/20 flex items-center justify-between";
+            btn.querySelector('span:last-child').outerHTML = `<span class="text-emerald-400 font-bold">✓ Correct</span>`;
+            quizScore++;
+            quizStreak++;
+            document.getElementById('quiz-score-live').innerText = quizScore;
+            document.getElementById('quiz-streak-live').innerText = quizStreak;
+          } else {
+            btn.className = "w-full p-4 bg-rose-950/60 border border-rose-500/60 rounded-xl text-rose-200 font-medium text-sm sm:text-base text-left transition-all shadow-lg shadow-rose-900/20 flex items-center justify-between";
+            btn.querySelector('span:last-child').outerHTML = `<span class="text-rose-400 font-bold">✗ Wrong</span>`;
+            quizStreak = 0;
+            document.getElementById('quiz-streak-live').innerText = quizStreak;
+
+            allButtons.forEach(b => {
+              if (b.querySelector('span').innerText === correctAnswer) {
+                b.className = "w-full p-4 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-emerald-300 font-medium text-sm sm:text-base text-left transition-all flex items-center justify-between";
+              }
+            });
+          }
+
+          document.getElementById('quiz-next-container').classList.remove('hidden');
+        });
+
+        container.appendChild(btn);
+      });
+    }
+
+    function nextQuizQuestion() {
+      currentQuizIndex++;
+      if (currentQuizIndex < quizDeck.length) {
+        loadQuizQuestion();
+      } else {
+        showQuizResults();
+      }
+    }
+
+    function showQuizResults() {
+      document.getElementById('quiz-active').classList.add('hidden');
+      document.getElementById('quiz-results').classList.remove('hidden');
+
+      const total = quizDeck.length;
+      const percentage = Math.round((quizScore / total) * 100);
+
+      document.getElementById('result-score').innerText = `${quizScore} / ${total}`;
+      document.getElementById('result-accuracy').innerText = `${percentage}%`;
+
+      const titleEl = document.getElementById('result-title');
+      const subtitleEl = document.getElementById('result-subtitle');
+
+      if (percentage >= 90) {
+        titleEl.innerText = "🎉 Elite Periodic Grandmaster!";
+        subtitleEl.innerText = `Phenomenal score! You successfully conquered all ${total} unique historical challenges.`;
+      } else if (percentage >= 70) {
+        titleEl.innerText = "🌟 Great Mastery!";
+        subtitleEl.innerText = "Solid understanding of the laws and scientists who shaped the periodic table.";
+      } else {
+        titleEl.innerText = "📚 Keep Exploring!";
+        subtitleEl.innerText = "Review the 8 foundational scientists in the study deck and try again to boost your score.";
+      }
+    }
+
+    function restartQuiz() {
+      startQuiz();
+    }
+  </script>
+</body>
+</html>
